@@ -4,10 +4,10 @@ public class Maison {
     private Consommation typeConsommation;
     
     //constructeur
-    public Maison(String nom, Generateur generateur, Consommation typeConsommation) {
+    public Maison(String nom, Consommation typeConsommation) {
     	this.nom=nom;
-    	this.generateur=generateur;
-    	this.typeConsommation=typeConsommation;
+    	this.generateur = null;
+    	this.typeConsommation = typeConsommation;
     }
     
     //setters et getters
@@ -40,6 +40,7 @@ public class Maison {
     public String toString() {
     	return "Maison : "+nom+" - Type de consommation :"+typeConsommation+ "("+ typeConsommation.getConsommation()+" kW).";
     }
+
     
     
     }
