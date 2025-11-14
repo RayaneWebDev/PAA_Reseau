@@ -1,4 +1,3 @@
-
 public enum Consommation {
 	BASSE(10), NORMALE(20), FORTE(40);
 	
@@ -9,7 +8,7 @@ public enum Consommation {
 		this.consommation=consommation;
 	}
 	
-	
+	//méthode pour récuperer la valeur consomamtion
 	public int getConsommation(){
 		return consommation;
 	}

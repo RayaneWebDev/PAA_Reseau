@@ -5,11 +5,14 @@ public class Generateur {
     private double capaciteMax;
     private List<Maison> maisons ;
 
+    //constructeur
     public Generateur(String nom, double capaciteMax) {
         this.nom = nom;
         this.capaciteMax = capaciteMax;
         this.maisons = new ArrayList<>();
     }
+
+    //getters et setters
     public String getNom() {
         return nom;
     }
@@ -28,9 +31,13 @@ public class Generateur {
     public void setMaisons(List<Maison> maisons) {
         this.maisons = maisons;
     }
+
+    //connecter une maison à ce générateur
     public void addMaison(Maison maison) {
         this.maisons.add(maison);
     }
+
+    //déconnecter une maison de ce générateur
     public void supprimerMaison(Maison maison) {
         this.maisons.remove(maison);
     }
@@ -44,7 +51,7 @@ public class Generateur {
         return chargeMaison;
     }
 
-    // Redefinition de la methode toString
+    // Redefinition de la methode toString()
     public String toString() {
         return "Générateur : "+nom+" - Capacité Max :"+capaciteMax+" kW).";
     }
