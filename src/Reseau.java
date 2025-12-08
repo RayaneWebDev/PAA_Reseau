@@ -284,11 +284,8 @@ public class Reseau {
 
     }
 
-
-
-    public static void main(String[] args) {
-        Scanner sc = new Scanner(System.in);
-        Reseau reseau = new Reseau();
+     //-- premier menu --
+    public static void construireReseau(Reseau reseau, Scanner sc){
         int choix ;
         do {
             System.out.println("""
@@ -371,9 +368,7 @@ public class Reseau {
             }
         } while (choix != 5);
         sc.close();
-
     }
-
     // --- Second menu ---
     public static void reseauMenu(Reseau reseau, Scanner sc) {
         int choix;
@@ -422,4 +417,21 @@ public class Reseau {
             }
         } while (choix != 4);
     }
+
+
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        Reseau reseau = new Reseau();
+        if(args.length == 0){
+            construireReseau(reseau, sc);
+            reseauMenu(reseau, sc);
+        }else{
+            System.out.println(" Partie 2 is loading ...");
+        }
+        
+
+    }
+
+
+   
 }
