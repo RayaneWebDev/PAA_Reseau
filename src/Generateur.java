@@ -3,13 +3,13 @@ import java.util.*;
 public class Generateur {
     private String nom;
     private double capaciteMax;
-    private List<Maison> maisons ;
+    private Set<Maison> maisons ;
 
     //constructeur
     public Generateur(String nom, double capaciteMax) {
         this.nom = nom;
         this.capaciteMax = capaciteMax;
-        this.maisons = new ArrayList<>();
+        this.maisons = new HashSet<>();
     }
 
     //getters et setters
@@ -25,10 +25,10 @@ public class Generateur {
     public void setCapaciteMax(double capaciteMax) {
         this.capaciteMax = capaciteMax;
     }
-    public List<Maison> getMaisons() {
+    public Set<Maison> getMaisons() {
         return maisons;
     }
-    public void setMaisons(List<Maison> maisons) {
+    public void setMaisons(Set<Maison> maisons) {
         this.maisons = maisons;
     }
 

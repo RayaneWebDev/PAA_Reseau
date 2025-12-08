@@ -1,21 +1,21 @@
 import java.util.*;
 
 public class Reseau {
-    private List<Generateur> generateurs;
-    private List<Maison> maisons;
+    private Set<Generateur> generateurs;
+    private Set<Maison> maisons;
     private double cout;
     private static final int LAMBDA = 10;   // sévérité de pénalisation, on choisit 10 par défaut
 
     public Reseau() {
-        this.generateurs = new ArrayList<>();
-        this.maisons = new ArrayList<>();
+        this.generateurs = new HashSet<>();
+        this.maisons = new HashSet<>();
     }
 
     //setters
-    public void setGenerateurs(List<Generateur> generateurs) {
+    public void setGenerateurs(Set<Generateur> generateurs) {
         this.generateurs = generateurs;
     }
-    public void setMaisons(List<Maison> maisons) {
+    public void setMaisons(Set<Maison> maisons) {
         this.maisons = maisons;
     }
     public void setCout(double cout) {
@@ -23,10 +23,10 @@ public class Reseau {
     }
 
     //getters
-    public List<Generateur> getGenerateurs() {
+    public Set<Generateur> getGenerateurs() {
         return generateurs;
     }
-    public List<Maison> getMaisons() {
+    public Set<Maison> getMaisons() {
         return maisons;
     }
     public double getCout() {
@@ -34,6 +34,7 @@ public class Reseau {
     }
 
     // méthodes de gestion
+
 
     //ajouter une maison
     public void ajouterMaison(Maison maison) {
@@ -282,6 +283,9 @@ public class Reseau {
         return new Object[]{m, g};
 
     }
+
+
+
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
         Reseau reseau = new Reseau();
