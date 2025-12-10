@@ -1,3 +1,194 @@
+import java.io.*;
+import java.util.*;
+
 public class ParserReseau {
-    
+
+    // HashMap pour les erreurs contenues dans le fichier
+    private HashMap<Integer, Set<String>> erreurs = new HashMap<>();
+
+    // recuperer fichier texte
+    public Reseau lireReseau(String nomFichier) {
+        Reseau reseau = new Reseau();
+        try (BufferedReader reader = new BufferedReader(new FileReader(nomFichier))) {
+            String ligne;
+            int numLigne = 0;// compteur pour le numéro de la ligne
+
+            // booléens pour verifier l'ordre des lignes (generateur -> maison -> connexion)
+            Boolean finGenerateur = false;
+            Boolean finMaison = false;
+
+            while ((ligne = reader.readLine()) != null) {
+                String cleanLigne;
+                numLigne++;
+                cleanLigne = ligne.trim();// ligne apres suppression des espaces
+                if (!cleanLigne.endsWith(".")) {
+                    enregistrerErreur(numLigne, "Il manque un point à la fin de la ligne.");
+
+                }
+                if (!cleanLigne.startsWith("generateur") && !cleanLigne.startsWith("maison")
+                        && !cleanLigne.startsWith("connexion")) {
+                    enregistrerErreur(numLigne,
+                            "Chaque ligne doit commencer par \"generateur\"  ,  \"maison\"  ou \"connexion\".");
+                }
+                // ligne generateur
+                if (cleanLigne.startsWith("generateur")) {
+                    if (finGenerateur) {
+                        enregistrerErreur(numLigne, "Ordre non respectee.");
+                        continue;
+                    }
+                    String arguments[] = extraireArguments(cleanLigne);
+                    if (arguments == null) {
+                        enregistrerErreur(numLigne, "Il manque au moins une parenthese dans cette ligne.");
+                    } else if (arguments.length != 2) {
+                        enregistrerErreur(numLigne, "Le nombre de parametres doit etre egal a 2.");
+                    } else {
+                        try {
+                            String nom = arguments[0].trim().toUpperCase();
+                            int capacite = Integer.parseInt(arguments[1]);
+
+                            if (!isAlphaNumerique(nom)) {
+                                enregistrerErreur(numLigne,
+                                        "Le nom d'un generateur ne peut contenir que des lettres et des chiffres.");
+                            }
+                            if (capacite < 0) {
+                                enregistrerErreur(numLigne, "La capacite d'un generateur doit etre positive.");
+                            }
+
+                            if (erreurs.get(numLigne) == null) {
+                                reseau.ajouterGenerateur(new Generateur(nom, capacite));
+                            }
+                        } catch (NumberFormatException e) {
+                            enregistrerErreur(numLigne, "La capacite d'un generateur doit etre un entier.");
+                        }
+
+                    }
+                    // ligne maison
+                } else if (cleanLigne.startsWith("maison")) {
+                    finGenerateur = true;
+                    if (finMaison) {
+                        enregistrerErreur(numLigne, "Ordre non respectee.");
+                        continue;
+                    }
+                    String arguments[] = extraireArguments(cleanLigne);
+                    if (arguments == null) {
+                        enregistrerErreur(numLigne, "Il manque au moins une parenthese dans cette ligne.");
+                    } else if (arguments.length != 2) {
+                        enregistrerErreur(numLigne, "Le nombre de parametres doit etre egal a 2.");
+                    } else {
+                        String nom = arguments[0].trim().toUpperCase();
+                        String type = arguments[1].trim().toUpperCase();
+                        Consommation consommation;
+                        switch (type) {
+                            case "BASSE" -> {
+                                consommation = Consommation.BASSE;
+                            }
+                            case "NORMALE" -> {
+                                consommation = Consommation.NORMALE;
+                            }
+                            case "FORTE" -> {
+                                consommation = Consommation.FORTE;
+                            }
+                            default -> {
+                                consommation = Consommation.NORMALE;
+                               enregistrerErreur(numLigne, "Type de consommation inconnu. Consommation par défaut : NORMALE.");
+                            }
+
+                        }
+                        if (!isAlphaNumerique(nom)) {
+                            enregistrerErreur(numLigne,
+                                    "Le nom d'une maison ne peut contenir que des lettres et des chiffres.");
+                        }
+                        if (erreurs.get(numLigne) == null) {
+                            reseau.ajouterMaison(new Maison(nom, consommation));
+                        }
+
+                    }
+                    // ligne connexion
+                } else if (cleanLigne.startsWith("connexion")) {
+                    finMaison = true;
+                    String arguments[] = extraireArguments(cleanLigne);
+                    if (arguments == null) {
+                        enregistrerErreur(numLigne, "Il manque au moins une parenthese dans cette ligne.");
+                    } else if (arguments.length != 2) {
+                        enregistrerErreur(numLigne, "Le nombre de parametres doit etre egal a 2.");
+                    } else {
+                        String entite1 = arguments[0].trim().toUpperCase();
+                        String entite2 = arguments[1].trim().toUpperCase();
+                        if (!isAlphaNumerique(entite1) || !isAlphaNumerique(entite2)) {
+                            enregistrerErreur(numLigne,
+                                    "Les noms des entites de la connexion doivent etre alphanumeriques.");
+                        } else {
+                            Object[] Connexion = reseau.lireConnexion(entite1, entite2);
+                            Maison m = (Maison) Connexion[0];
+                            Generateur g = (Generateur) Connexion[1];
+                            // VÉRIFIER que les entités existent et sont du bon type avant d'ajouter
+                            if (m == null || g == null) {
+                                enregistrerErreur(numLigne, "Connexion impossible : au moins une des entités ("
+                                        + entite1 + ", " + entite2 + ") est introuvable ou n'est pas du bon type.");
+                            } else {
+                                if (erreurs.get(numLigne) == null) {
+                                    reseau.ajouterConnexion(g, m);
+                                }
+
+                            }
+
+                        }
+
+                    }
+
+                }
+
+            }
+        } catch (FileNotFoundException e) {
+            System.err.println("Le fichier " + nomFichier + " est introuvable : " + e.getMessage());
+            return null;
+        } catch (IOException e) {
+            System.err.println("Erreur de lecture du fichier " + nomFichier + " : " + e.getMessage());
+            return null;
+        }
+
+        // le reader est fermé automatiquement grace au try-with-ressources
+
+        if (!erreurs.isEmpty()) {
+            return null;
+        }
+        return reseau;
+    }
+
+    // méthode pour supprimer les parenthèses et extraire les arguments
+    public static String[] extraireArguments(String cleanLigne) {
+        int debut = cleanLigne.indexOf("(") + 1;
+        int fin = cleanLigne.indexOf(")");
+        if (debut != -1 && fin != -1) {// parenthèses existantes
+            return cleanLigne.substring(debut, fin).split(",");
+        } else {
+            return null;
+        }
+    }
+
+    // methode pour vérifier que les noms des generateurs et maisons sont des
+    // alphanumeriques
+    public static boolean isAlphaNumerique(String nom) {
+        // null ou vide
+        if (nom == null || nom.isEmpty()) {
+            return false;
+        }
+
+        // iterer sur la chaine
+        for (int i = 0; i < nom.length(); i++) {
+            char c = nom.charAt(i);
+
+            if (!Character.isLetterOrDigit(c)) {
+                return false;
+            }
+
+        }
+
+        return true;
+    }
+
+    // methode pour enregistrer une erreur à une ligne du fichier
+    private void enregistrerErreur(int numLigne, String message) {
+        erreurs.computeIfAbsent(numLigne, k -> new HashSet<>()).add(message);
+    }
 }

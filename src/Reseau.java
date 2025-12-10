@@ -244,6 +244,32 @@ public class Reseau {
         return res;
     }
 
+    public Object[] lireConnexion(String entite1, String entite2){
+        Maison m = null;
+        Generateur g = null;
+
+        // Déterminer les rôles selon la première lettre
+        if (entite1.startsWith("M") && entite2.startsWith("G")) {
+            m = trouverMaison(entite1);
+            g = trouverGenerateur(entite2);
+        } else if (entite1.startsWith("G") && entite2.startsWith("M")) {
+            g = trouverGenerateur(entite1);
+            m = trouverMaison(entite2);
+        } else {
+            System.out.println("Erreur : il faut une maison (M...) et un générateur (G...) !");
+
+        }
+
+        if (m == null) {
+            System.out.println("Maison introuvable");
+            return null;
+        }
+        if (g == null) {
+            System.out.println("Generateur introuvable");
+            return null;
+        }
+        return new Object[]{m, g};
+    }
     
     //methode pour récupérer les paires (maison,generateur) ou (generateur, maison)
     public Object[] lireConnexion(Scanner sc, String message){
@@ -254,19 +280,19 @@ public class Reseau {
             System.out.println("Format invalide !");
         }
 
-        String s1 = elements[0].toUpperCase();
-        String s2 = elements[1].toUpperCase();
+        String entite1 = elements[0].toUpperCase();
+        String entite2 = elements[1].toUpperCase();
 
         Maison m = null;
         Generateur g = null;
 
         // Déterminer les rôles selon la première lettre
-        if (s1.startsWith("M") && s2.startsWith("G")) {
-            m = trouverMaison(s1);
-            g = trouverGenerateur(s2);
-        } else if (s1.startsWith("G") && s2.startsWith("M")) {
-            g = trouverGenerateur(s1);
-            m = trouverMaison(s2);
+        if (entite1.startsWith("M") && entite2.startsWith("G")) {
+            m = trouverMaison(entite1);
+            g = trouverGenerateur(entite2);
+        } else if (entite1.startsWith("G") && entite2.startsWith("M")) {
+            g = trouverGenerateur(entite1);
+            m = trouverMaison(entite2);
         } else {
             System.out.println("Erreur : il faut une maison (M...) et un générateur (G...) !");
 
