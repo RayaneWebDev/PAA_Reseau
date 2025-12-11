@@ -48,13 +48,15 @@ public class Reseau {
                 if (m.equals(maison)) {
                     m.setTypeConsommation(maison.getTypeConsommation());
                     System.out.println(
-                            "La maison ( " + maison.getNom() + " , "+maison.getTypeConsommation() + " ) est déjà existante, Consommation mise à jour !");
+                            "La maison ( " + maison.getNom() + " , " + maison.getTypeConsommation()
+                                    + " ) est déjà existante, Consommation mise à jour !");
                     return;
                 }
             }
         }
 
-        System.out.println("La maison ( "+ maison.getNom() + " , "+maison.getTypeConsommation() + " ) est ajoutée !");
+        System.out
+                .println("La maison ( " + maison.getNom() + " , " + maison.getTypeConsommation() + " ) est ajoutée !");
     }
 
     // ajouter un générateur
@@ -66,14 +68,16 @@ public class Reseau {
                 if (g.equals(generateur)) {
                     g.setCapaciteMax(generateur.getCapaciteMax());
                     System.out.println(
-                            
-                            "Le generateur ( "  +generateur.getNom()+ " , " +generateur.getCapaciteMax()+ " ) est déjà existant, Capacite mise à jour !");
+
+                            "Le generateur ( " + generateur.getNom() + " , " + generateur.getCapaciteMax()
+                                    + " ) est déjà existant, Capacite mise à jour !");
                     return;
                 }
             }
         }
 
-        System.out.println("Le generateur ( "  +generateur.getNom()+ " , " +generateur.getCapaciteMax()+ " ) est ajouté !");
+        System.out.println(
+                "Le generateur ( " + generateur.getNom() + " , " + generateur.getCapaciteMax() + " ) est ajouté !");
     }
 
     // trouver une maison
@@ -91,11 +95,11 @@ public class Reseau {
         Generateur g = trouverGenerateur(generateur.getNom());
         Maison m = trouverMaison(maison.getNom());
         if (g == null) {
-            System.out.println("Générateur "+g.getNom()+" introuvable, veuillez réassayez");
+            System.out.println("Générateur introuvable, veuillez réassayez");
             return;
         }
         if (m == null) {
-            System.out.println("Maison "+m.getNom()+" introuvable, veuillez réassayez");
+            System.out.println("Maison introuvable, veuillez réassayez");
             return;
         }
         if (verifConnexion(generateur, maison)) {
@@ -171,7 +175,7 @@ public class Reseau {
                 }
             }
             if (nbrConnexions == 0) {
-                System.out.println("Réseau invalide : Pas de connexion pour la maison"+m.getNom());
+                System.out.println("Réseau invalide : Pas de connexion pour la maison" + m.getNom());
                 return false;
             }
             if (nbrConnexions > 1) {
@@ -179,7 +183,7 @@ public class Reseau {
                 builder.append(" ");
             }
             if (!builder.isEmpty()) {
-                System.out.println("Réseau invalide : Trop de connexions pour"+builder.toString());
+                System.out.println("Réseau invalide : Trop de connexions pour" + builder.toString());
                 return false;
             }
         }
@@ -190,7 +194,7 @@ public class Reseau {
     public String reseauNonValide() {
         for (Generateur g : generateurs) {
             if (g.getMaisons() == null) {
-                return "Réseau invalide : Aucune maison connectee au generateur "+g.getNom();
+                return "Réseau invalide : Aucune maison connectee au generateur " + g.getNom();
             }
         }
         StringBuilder builder = new StringBuilder();
@@ -202,7 +206,7 @@ public class Reseau {
                 }
             }
             if (nbrConnexions == 0) {
-                return "Réseau invalide : Pas de connexion pour la maison"+m.getNom();
+                return "Réseau invalide : Pas de connexion pour la maison" + m.getNom();
             }
             if (nbrConnexions > 1) {
                 builder.append(m.getNom());
@@ -210,13 +214,11 @@ public class Reseau {
             }
             if (!builder.isEmpty()) {
                 System.out.println();
-                return "Réseau invalide : Trop de connexions pour"+builder.toString();
+                return "Réseau invalide : Trop de connexions pour" + builder.toString();
             }
         }
-        return null; //si reseau valide
+        return null; // si reseau valide
     }
-
-
 
     // --- Calculs du coût (simplifié pour le moment) ---
     public double calculerCout() {
@@ -502,14 +504,14 @@ public class Reseau {
         if (args.length == 0) {
             construireReseau(reseau, sc);
             reseauMenu(reseau, sc);
-        } else if(args.length == 2) {
-            ParserReseau pr =new ParserReseau();
-            reseau=pr.lireReseau(args[0]);
-            if(reseau!=null){
+        } else if (args.length == 2) {
+            ParserReseau pr = new ParserReseau();
+            reseau = pr.lireReseau(args[0]);
+            if (reseau != null) {
                 reseau.afficherReseau();
             }
-            
-        }else{
+
+        } else {
             System.err.println("Usage : java Reseau <chemin_vers_fichier> <LAMBDA>");
         }
 
