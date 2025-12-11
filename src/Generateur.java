@@ -51,6 +51,17 @@ public class Generateur {
         return chargeMaison;
     }
 
+
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Generateur generateur = (Generateur) o;
+        return nom.equals(generateur.nom); // Unicité basée sur le nom
+    }
+
+    public int hashCode() {
+        return nom.hashCode();
+    }
     // Redefinition de la methode toString()
     public String toString() {
         return "Générateur : "+nom+" - Capacité Max :"+capaciteMax+" kW).";

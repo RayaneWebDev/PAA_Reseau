@@ -35,6 +35,17 @@ public class Maison {
     	this.typeConsommation=typeConsommation;
     }
     
+    //redefinition de la méthode equals()
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Maison maison = (Maison) o;
+        return nom.equals(maison.nom); // Unicité basée sur le nom
+    }
+
+    public int hashCode() {
+        return nom.hashCode();
+    }
     
     //Redéfinition de la méthode toString()
     public String toString() {

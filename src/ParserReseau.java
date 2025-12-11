@@ -82,7 +82,7 @@ public class ParserReseau {
                             case "BASSE" -> {
                                 consommation = Consommation.BASSE;
                             }
-                            case "NORMALE" -> {
+                            case "NORMAL" -> {
                                 consommation = Consommation.NORMALE;
                             }
                             case "FORTE" -> {
@@ -90,7 +90,7 @@ public class ParserReseau {
                             }
                             default -> {
                                 consommation = Consommation.NORMALE;
-                               enregistrerErreur(numLigne, "Type de consommation inconnu. Consommation par défaut : NORMALE.");
+                                //enregistrerErreur(numLigne, "Type de consommation inconnu. Consommation par défaut : NORMAL.");
                             }
 
                         }
@@ -119,19 +119,23 @@ public class ParserReseau {
                                     "Les noms des entites de la connexion doivent etre alphanumeriques.");
                         } else {
                             Object[] Connexion = reseau.lireConnexion(entite1, entite2);
-                            Maison m = (Maison) Connexion[0];
-                            Generateur g = (Generateur) Connexion[1];
-                            // VÉRIFIER que les entités existent et sont du bon type avant d'ajouter
-                            if (m == null || g == null) {
-                                enregistrerErreur(numLigne, "Connexion impossible : au moins une des entités ("
-                                        + entite1 + ", " + entite2 + ") est introuvable ou n'est pas du bon type.");
-                            } else {
-                                if (erreurs.get(numLigne) == null) {
-                                    reseau.ajouterConnexion(g, m);
+                            if(Connexion!=null){
+                                Maison m = (Maison) Connexion[0];
+                                Generateur g = (Generateur) Connexion[1];
+                                // VÉRIFIER que les entités existent et sont du bon type avant d'ajouter
+                                if (m == null || g == null) {
+                                    enregistrerErreur(numLigne, "Connexion impossible : au moins une des entités ("
+                                            + entite1 + ", " + entite2 + ") est introuvable ou n'est pas du bon type.");
+                                } else {
+                                    if (erreurs.get(numLigne) == null) {
+                                        reseau.ajouterConnexion(g, m);
+                                    }
+
                                 }
-
                             }
+                            
 
+                            
                         }
 
                     }
@@ -148,10 +152,15 @@ public class ParserReseau {
         }
 
         // le reader est fermé automatiquement grace au try-with-ressources
-
+        String reseauInvalide = reseau.reseauNonValide();
+        if(reseauInvalide!=null){//les reseau n'est pas valide
+            enregistrerErreur(0, reseauInvalide);
+        }
         if (!erreurs.isEmpty()) {
+            afficherRapport();
             return null;
         }
+        
         return reseau;
     }
 
@@ -191,4 +200,38 @@ public class ParserReseau {
     private void enregistrerErreur(int numLigne, String message) {
         erreurs.computeIfAbsent(numLigne, k -> new HashSet<>()).add(message);
     }
+
+    public void afficherRapport() {
+
+        System.err.println("\n*** Rapport d'Erreurs ***");
+        System.err.println("*************************\n");
+
+
+        // nous allons simplement trier les clés pour un affichage propre :
+        
+        // Récupérer les clés et les trier (les numéros de ligne)
+        List<Integer> lignesTriees = new ArrayList<>(erreurs.keySet());
+        Collections.sort(lignesTriees);
+
+        for (int numLigne : lignesTriees) {
+            // Récupérer le Set des messages pour cette ligne
+            Set<String> messages = erreurs.get(numLigne);
+
+            // Déterminer le préfixe (Ligne ou Validation Globale)
+            String prefixe;
+            if (numLigne == 0) {
+                prefixe = "Validation Globale : "; //pour la validation globale du reseau
+            } else {
+                prefixe = "Ligne " + numLigne + " : ";//pour chaque ligne
+            }
+
+            // 2. Parcourir le Set de messages pour chaque ligne
+            for (String message : messages) {
+                System.err.println(prefixe + message);
+            }
+        }
+        
+        System.err.println("\n*************************");
+    }
+    
 }
