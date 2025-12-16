@@ -83,16 +83,15 @@ public class ParserReseau {
                                 consommation = Consommation.BASSE;
                             }
                             case "NORMAL" -> {
-                                consommation = Consommation.NORMALE;
+                                consommation = Consommation.NORMAL;
                             }
                             case "FORTE" -> {
                                 consommation = Consommation.FORTE;
                             }
                             default -> {
-                                consommation = Consommation.NORMALE;
-                                //enregistrerErreur(numLigne, "Type de consommation inconnu. Consommation par défaut : NORMAL.");
+                                consommation = Consommation.NORMAL;
+                                System.out.println("Par défaut, Consommation : NORMAL ");
                             }
-
                         }
                         if (!isAlphaNumerique(nom)) {
                             enregistrerErreur(numLigne,

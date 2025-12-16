@@ -62,9 +62,10 @@ public class Generateur {
     public int hashCode() {
         return nom.hashCode();
     }
+    
     // Redefinition de la methode toString()
     public String toString() {
-        return "Générateur : "+nom+" - Capacité Max :"+capaciteMax+" kW).";
+        return nom+" ( "+capaciteMax+" kW ).";
     }
 
 }

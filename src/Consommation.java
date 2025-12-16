@@ -1,5 +1,5 @@
 public enum Consommation {
-	BASSE(10), NORMALE(20), FORTE(40);
+	BASSE(10), NORMAL(20), FORTE(40);
 	
 	private int consommation;
 	

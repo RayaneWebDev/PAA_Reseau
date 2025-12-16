@@ -49,7 +49,7 @@ public class Maison {
     
     //Redéfinition de la méthode toString()
     public String toString() {
-    	return "Maison : "+nom+" - Type de consommation :"+typeConsommation+ "("+ typeConsommation.getConsommation()+" kW).";
+    	return nom+" ( "+ typeConsommation.getConsommation()+" kW ).";
     }
     
     }

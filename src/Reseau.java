@@ -5,7 +5,7 @@ public class Reseau {
     private Set<Generateur> generateurs;
     private Set<Maison> maisons;
     private double cout;
-    private static final int LAMBDA = 10; // sévérité de pénalisation, on choisit 10 par défaut
+    private int lambda = 10; // sévérité de pénalisation, on choisit 10 par défaut
 
     public Reseau() {
         this.generateurs = new HashSet<>();
@@ -25,6 +25,10 @@ public class Reseau {
         this.cout = cout;
     }
 
+    public void setLambda(int lambda){
+        this.lambda=lambda;
+    }
+
     // getters
     public Set<Generateur> getGenerateurs() {
         return generateurs;
@@ -38,7 +42,25 @@ public class Reseau {
         return cout;
     }
 
+    public int getLambda(){
+        return lambda;
+    }
+
     // méthodes de gestion
+
+    //afficher les maisons
+    public void afficherMaisons(){
+        for(Maison m:maisons){
+            System.out.print(" "+m+" | ");
+        }   
+    }
+
+    //afficher les generateurs
+    public void afficherGenerateurs(){
+        for(Generateur g:generateurs){
+            System.out.print(" "+g+ " | ");
+        }
+    }
 
     // ajouter une maison
     public void ajouterMaison(Maison maison) {
@@ -144,20 +166,35 @@ public class Reseau {
 
     // supprimer un generateur
     public void supprimerGenerateur(Generateur generateur) {
-        if (trouverGenerateur(generateur.getNom()) == null) {
+        if (generateur == null || trouverGenerateur(generateur.getNom()) == null) {
             System.out.println("Generateur introuvable");
             return;
         }
         generateurs.remove(generateur);
+        System.out.println("Générateur "+generateur.toString()+" supprimé avec succès.");
+        
+        for(Maison m:maisons){
+            if(verifConnexion(generateur, m)){
+                m.setGenerateur(null);
+            }
+        }
+        System.out.println("Suppression des connexions de "+generateur.getNom() +" : succès");
     }
 
     // supprimer une maison
     public void supprimerMaison(Maison maison) {
-        if (trouverMaison(maison.getNom()) == null) {
+        if (maison ==null || trouverMaison(maison.getNom()) == null) {
             System.out.println("Maison introuvable");
             return;
         }
         maisons.remove(maison);
+        System.out.println("Maison "+maison.toString()+" supprimé avec succès.");
+        for(Generateur g:generateurs){
+            if(verifConnexion(g, maison)){
+                g.supprimerMaison(maison);
+            }
+        }
+        System.out.println("Suppression des connexions de "+maison.getNom() +" : succès");
     }
 
     // vérifier si le réseau est valide
@@ -176,7 +213,7 @@ public class Reseau {
                 }
             }
             if (nbrConnexions == 0) {
-                System.out.println("Réseau invalide : Pas de connexion pour la maison" + m.getNom());
+                System.out.println("Réseau invalide : Pas de connexion pour la maison " + m.getNom());
                 return false;
             }
             if (nbrConnexions > 1) {
@@ -184,7 +221,7 @@ public class Reseau {
                 builder.append(" ");
             }
             if (!builder.isEmpty()) {
-                System.out.println("Réseau invalide : Trop de connexions pour" + builder.toString());
+                System.out.println("Réseau invalide : Trop de connexions pour " + builder.toString());
                 return false;
             }
         }
@@ -249,7 +286,7 @@ public class Reseau {
                 surcharge += (taux - 1);
         }
 
-        total = disp + LAMBDA * surcharge;
+        total = disp + lambda * surcharge;
         this.cout = total;
         System.out.println("-------------------------------------------------------");
         System.out.printf("Disp(S) = %.3f | Surcharge(S) = %.3f | Cout(S) = %.3f%n", disp, surcharge, total);
@@ -308,7 +345,7 @@ public class Reseau {
                 bestCost, iterations, initialTemp, coolingRate, swapProb);
 
         for (int it = 0; it < iterations; it++) {
-            boolean performedChange = false;
+            boolean performedChange=false;
             double newCost = currentCost;
 
             if (rnd.nextDouble() < swapProb && maisonList.size() >= 2) {
@@ -466,26 +503,6 @@ public class Reseau {
         System.out.println("=========================\n");
     }
 
-    // méthode pour vérifier que l'entrée du clavier est un entier
-    private static int lireEntierAuClavier(Scanner sc, String message) {
-        int res = 0;
-        boolean lectureOK = false;
-
-        while (!lectureOK) {
-            try {
-                System.out.print(message);
-                res = sc.nextInt();
-                if (res < 1 || res > 5) {
-                    throw new InputMismatchException();
-                }
-                lectureOK = true;
-            } catch (InputMismatchException e) {
-                System.out.println("Il faut taper un nombre entier entre 1 et 5");
-                sc.nextLine();
-            }
-        }
-        return res;
-    }
 
     public Object[] lireConnexion(String entite1, String entite2) {
         Maison m = null;
@@ -553,152 +570,9 @@ public class Reseau {
         return new Object[] { m, g };
 
     }
-
-    // -- premier menu --
-    public static void construireReseau(Reseau reseau, Scanner sc) {
-        int choix;
-        do {
-            System.out.println("""
-
-
-                    ==== MENU PRINCIPAL ====
-                    1) Ajouter un générateur
-                    2) Ajouter une maison
-                    3) Ajouter une connexion
-                    4) Supprimer une connexion
-                    5) Fin
-                    =========================
-
-
-                    """);
-            choix = lireEntierAuClavier(sc, "choix = ");// Récupérer le choix de l'utilisateur
-
-            switch (choix) {
-                case 1 -> {// ajout d'un générateur
-                    System.out.print("Nom et capacité (ex: G1 60) : ");
-                    String nom = sc.next().toUpperCase();
-                    double cap = sc.nextDouble();
-                    if (!nom.startsWith("G") || cap < 0) {// verifier la saisie
-                        System.out.println("Erreur : il faut Générateur (G...) et sa capacité maximale ( > 0 ) !");
-                    } else {
-                        reseau.ajouterGenerateur(new Generateur(nom, cap));
-                    }
-
-                }
-                case 2 -> {// ajout d'une maison
-                    System.out.print("Nom et type (BASSE/NORMALE/FORTE) : ");
-                    String nom = sc.next().toUpperCase();
-                    String type = sc.next().toUpperCase();
-                    Consommation consommation;
-                    switch (type) {
-                        case "BASSE" -> {
-                            consommation = Consommation.BASSE;
-                        }
-                        case "NORMALE" -> {
-                            consommation = Consommation.NORMALE;
-                        }
-                        case "FORTE" -> {
-                            consommation = Consommation.FORTE;
-                        }
-                        default -> {
-                            consommation = Consommation.NORMALE;
-                            System.out.println("Par défaut, Consommation : NORMALE ");
-                        }
-
-                    }
-                    if (!nom.startsWith("M")) {
-                        System.out.println("Erreur : il faut Maison (M...) et son type (BASSE, NORMALE ou FORTE) !");
-                    } else {
-                        reseau.ajouterMaison(new Maison(nom, consommation));
-                    }
-
-                }
-                case 3 -> {
-                    sc.nextLine();
-                    Object[] MaisonGen = reseau.lireConnexion(sc, "Entrer une connexion (ex M1 G1 ou G1 M1) : ");
-                    if (MaisonGen != null) {
-                        Maison m = (Maison) MaisonGen[0];
-                        Generateur g = (Generateur) MaisonGen[1];
-                        reseau.ajouterConnexion(g, m);
-                    }
-
-                }
-                case 4 -> {
-                    sc.nextLine();
-                    Object[] MaisonGen = reseau.lireConnexion(sc, "Supprimer une connexion (ex M1 G1 ou G1 M1) : ");
-                    if (MaisonGen != null) {
-                        Maison m = (Maison) MaisonGen[0];
-                        Generateur g = (Generateur) MaisonGen[1];
-                        reseau.supprimerConnexion(g, m);
-                    }
-                }
-                case 5 -> {
-                    if (reseau.reseauValide()) {
-                        System.out.println("Réseau valide !");
-                        reseauMenu(reseau, sc);
-                    } else {
-                        System.out.println("""
-                                Veuillez corriger les connexions puis rééssayer.""");
-                        choix = -1;// pour revenir au menu principal pour corriger les connexions
-                    }
-                }
-
-            }
-        } while (choix != 5);
-        sc.close();
-    }
-
-    // --- Second menu ---
-    public static void reseauMenu(Reseau reseau, Scanner sc) {
-        int choix;
-        do {
-            System.out.println("""
-                    ==== MENU RÉSEAU ====
-                    1) Calculer le coût du réseau
-                    2) Modifier une connexion
-                    3) Afficher le réseau
-                    4) Fin
-                    =====================
-                    """);
-            System.out.print("Votre choix : ");
-            choix = sc.nextInt();
-
-            switch (choix) {
-                case 1 -> reseau.calculerCout();
-                case 2 -> {
-                    sc.nextLine();
-                    Object[] MaisonGen1 = reseau.lireConnexion(sc,
-                            "Veuillez saisir la connexion que vous souhaitez modifier : ");
-                    if (MaisonGen1 != null) {
-                        Maison m1 = (Maison) MaisonGen1[0];
-                        Generateur g1 = (Generateur) MaisonGen1[1];
-                        reseau.supprimerConnexion(g1, m1);
-                        Object[] MaisonGen2 = reseau.lireConnexion(sc, "Veuillez saisir la nouvelle connexion : ");
-                        if (MaisonGen2 != null) {
-                            Maison m2 = (Maison) MaisonGen2[0];
-                            Generateur g2 = (Generateur) MaisonGen2[1];
-                            reseau.ajouterConnexion(g2, m2);
-                        }
-                    }
-
-                }
-                case 3 -> reseau.afficherReseau();
-                case 4 -> {
-                    if (reseau.reseauValide()) {
-                        System.out.println("Merci, à bientot !");
-                    } else {
-                        System.out.println("""
-                                Réseau invalide.
-                                Corrigez les connexions avant de continuer.""");
-                        choix = -1;// pour revenir au menu principal pour corriger les connexions
-                    }
-                }
-            }
-        } while (choix != 4);
-    }
-
+    
     public void sauvegarderDansFichier(String nomFichier) {
-        try (PrintWriter writer = new PrintWriter(new FileWriter(nomFichier))) {
+        try (PrintWriter writer = new PrintWriter(new FileWriter("src/"+nomFichier))) {
 
             // 1) Générateurs
             for (Generateur g : generateurs) {
@@ -731,24 +605,16 @@ public class Reseau {
         Scanner sc = new Scanner(System.in);
         Reseau reseau = new Reseau();
         if (args.length == 0) {
-            construireReseau(reseau, sc);
-            reseauMenu(reseau, sc);
+            Menu.constructionManuelle(reseau, sc);
         } else if (args.length == 2) {
+            reseau.setLambda(Integer.parseInt(args[1]));
             ParserReseau pr = new ParserReseau();
             reseau = pr.lireReseau(args[0]);
             if (reseau != null) {
                 reseau.afficherReseau();
-                reseau.optimiserRecuitAvance(
-                        200,
-                        1.0,
-                        0.999,
-                        0L,
-                        0.4
-                );
-                System.out.println("-------------------------------------------------");
-                System.out.println("--------Nouveau Reseau apres optimisation--------");
-                System.out.println("-------------------------------------------------");
-                reseau.afficherReseau();
+                
+                Menu.constructionFichier(reseau, sc);
+                
             }
 
         } else {
