@@ -9,7 +9,7 @@ public class ParserReseau {
     // recuperer fichier texte
     public Reseau lireReseau(String nomFichier) {
         Reseau reseau = new Reseau();
-        try (BufferedReader reader = new BufferedReader(new FileReader(nomFichier))) {
+        try (BufferedReader reader = new BufferedReader(new FileReader("src/instances_Test/"+nomFichier))) {
             String ligne;
             int numLigne = 0;// compteur pour le numéro de la ligne
 

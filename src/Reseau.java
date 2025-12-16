@@ -438,8 +438,6 @@ public class Reseau {
         // Restaurer la meilleure affectation trouvée (cohérence bidirectionnelle garantie)
         restoreAssignments(bestAssign);
         this.calculerCout();
-        // sauvegarde de la solution dans un fichier
-        this.sauvegarderDansFichier("reseau_optimise.txt");
         System.out.printf("Recuit terminé. Meilleur coût = %.5f%n", bestCost);
     }
 
@@ -572,7 +570,7 @@ public class Reseau {
     }
     
     public void sauvegarderDansFichier(String nomFichier) {
-        try (PrintWriter writer = new PrintWriter(new FileWriter("src/"+nomFichier))) {
+        try (PrintWriter writer = new PrintWriter(new FileWriter("src/reseaux_sauvegardes/"+nomFichier))) {
 
             // 1) Générateurs
             for (Generateur g : generateurs) {
@@ -618,7 +616,7 @@ public class Reseau {
             }
 
         } else {
-            System.err.println("Usage : java Reseau <chemin_vers_fichier> <LAMBDA>");
+            System.err.println("Usage : java -cp Reseau <nom_du_fichier> <LAMBDA>");
         }
 
     }

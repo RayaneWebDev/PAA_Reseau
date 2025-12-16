@@ -37,7 +37,7 @@ public class Menu {
                     4) Supprimer un générateur
                     5) Supprimer une maison
                     6) Supprimer une connexion
-                    7) Fin
+                    7) Plus d'options
                     =========================
 
 
@@ -141,7 +141,8 @@ public class Menu {
                     2) Modifier une connexion
                     3) Afficher le réseau
                     4) Modifier le réseau
-                    5) Fin
+                    5) Sauvegarder le réseau
+                    6) Fin
                     =====================
                     """);
             choix = lireEntierAuClavier(sc, "choix = ");// Récupérer le choix de l'utilisateur
@@ -168,6 +169,20 @@ public class Menu {
                 case 3 -> reseau.afficherReseau();
                 case 4 -> constructionManuelle(reseau, sc);
                 case 5 -> {
+                    if(reseau.reseauValide()) {
+                        System.out.print("Entrez un nom de fichier pour enregistrer la solution actuelle : ");
+                        String nomFichier = sc.next();
+                        reseau.sauvegarderDansFichier(nomFichier);
+                    }
+                    else {
+                        System.out.println("""
+                                Réseau invalide.
+                                Corrigez les connexions avant de continuer.""");
+                        choix = -1;// pour revenir au menu principal pour corriger les connexions
+                    }
+
+                }
+                case 6 -> {
                     if (reseau.reseauValide()) {
                         System.out.println("Merci, à bientot !");
                     } else {
@@ -178,7 +193,7 @@ public class Menu {
                     }
                 }
             }
-        } while (choix !=5);
+        } while (choix !=6);
     }
 
      public static void constructionFichier(Reseau reseau, Scanner sc){
