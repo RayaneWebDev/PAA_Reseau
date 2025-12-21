@@ -2,7 +2,14 @@
                PROJET RÉSEAU ÉLECTRIQUE
             Optimisation par recuit simulé
 ====================================================
+AUTEURS :
+- TAOUACHE Rayane | Num Étudiant : 22522803
+- BENHAMMA Dania  | Num Étudiant : 22416535
 
+GROUPE : TP du Jeudi 15h45-18h45
+DATE DE REMISE DU TRAVAIL : 21 Décembre 2025
+
+----------------------------------------------------
 1. PRÉSENTATION DU PROJET
 ----------------------------------------------------
 Ce projet consiste à modéliser un réseau électrique
@@ -135,7 +142,7 @@ Fonctionnalités correctement implémentées :
  ********** FONCTIONNALITES AJOUTEES *********** :
  - Suppression d'un generateur ou maison
  - Affichage de la liste des générateurs et maisons quand l'utilisateur veut ajouter une connexion
- - Sauvegarde du réseau crée manuellement
+ - Sauvegarde du réseau créé manuellement
  - Implémentation d'algorithme d'optimisation du coût plus efficace
 
 
@@ -151,13 +158,36 @@ Fonctionnalités correctement implémentées :
 ----------------------------------------------------
 9. COMPILATION ET EXÉCUTION
 ----------------------------------------------------
-Depuis la racine du projet :
+Prérequis : Java JDK (version 17 ou supérieure recommandée).
 
-Compilation :
-    javac -d bin src/*.java
+Ouvrez un terminal à la racine du projet (Celui qui contient le dossier src et le fichier README.txt):
 
-Exécution :
-    java -cp bin Reseau <nom_du_fichier> <LAMBDA>       // où 10 représente la valeur de lambda à titre d'exemple
+1. Compilation :
+  Tapez la commande suivante pour compiler tous les fichiers vers le dossier bin :
+
+  javac -d bin src/*.java
+
+  NOTE : Si vous obtenez une erreur indiquant que le dossier 'bin' est introuvable, 
+  merci de le créer manuellement avant de relancer la compilation :
+
+    Windows : mkdir bin
+    Linux/Mac : mkdir bin
+
+2. Exécution :
+  A. Importer un fichier contenant le réseau : 
+    Placez votre fichier .txt dans le dossier "src/instances_Test/" 
+    Lancez ensuite la commande :
+
+    java -cp bin Reseau <nom_du_fichier> <LAMBDA>
+
+  B. Construire le réseau manuellement :
+    Lancez simplement :
+
+    java -cp bin Reseau 
+
+N.B. : Toutes les commandes doivent être lancées depuis la racine du projet (le dossier contenant src et bin). 
+Si vous avez navigué dans src/instances_Test pour ajouter un fichier, n'oubliez pas de revenir en arrière avec la
+ commande cd .. avant de compiler ou d'exécuter.
 
 ----------------------------------------------------
 
@@ -170,7 +200,7 @@ generateur(G1,60).
 maison(M1,NORMALE).
 connexion(G1,M1).
 
-Le fichier est enregistré dans le dossier src.
+Le fichier est enregistré dans le dossier src/reseaux_sauvegardes/
 
 ----------------------------------------------------
 

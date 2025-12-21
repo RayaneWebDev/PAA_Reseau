@@ -570,7 +570,20 @@ public class Reseau {
     }
     
     public void sauvegarderDansFichier(String nomFichier) {
-        try (PrintWriter writer = new PrintWriter(new FileWriter("src/reseaux_sauvegardes/"+nomFichier))) {
+        //Définir le chemin du dossier 
+        String cheminDossier = "src/reseaux_sauvegardes";
+        File dossier = new File(cheminDossier);
+
+        //creer le dossier s'il n'existe pas 
+        if(!dossier.exists()){
+            boolean cree = dossier.mkdirs();
+            if(cree){
+                System.out.println("Dossier de sauvegarde crée : " +cheminDossier);
+            }
+        }
+
+        //ouvrir le flux d'écriture 
+        try (PrintWriter writer = new PrintWriter(new FileWriter(new File(dossier,nomFichier)))){
 
             // 1) Générateurs
             for (Generateur g : generateurs) {
@@ -590,7 +603,7 @@ public class Reseau {
                 }
             }
 
-            System.out.println("Réseau sauvegardé dans : " + nomFichier);
+            System.out.println("Réseau sauvegardé avec succès dans le fichier : " +cheminDossier +"/"+ nomFichier);
 
         } catch (IOException e) {
             System.err.println("Erreur lors de l'écriture du fichier : " + e.getMessage());
